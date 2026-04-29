@@ -1,0 +1,23 @@
+{
+  "name": "cv_builder",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --watch app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vipul706/SIT725_CV_Builder.git"
+  },
+  "author": "Vipul Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vipul706/SIT725_CV_Builder/issues"
+  },
+  "homepage": "https://github.com/Vipul706/SIT725_CV_Builder#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

@@ -1,0 +1,247 @@
+# AI-Powered CV Builder 🚀
+
+## 📌 Project Overview
+
+AI-Powered CV Builder is a web-based platform that allows users to create professional resumes using pre-built templates, export them as PDFs, and receive **AI-generated feedback with ATS scoring**.
+
+⚠️ **Note:** The AI module in this project is **developed in-house** and is part of our system (not dependent on third-party AI services).
+
+---
+
+## 🛠️ Tech Stack
+
+* Frontend: HTML, CSS, JavaScript (or Angular/Ionic)
+* Backend: Node.js, Express
+* Database: MongoDB (via Prisma ORM)
+* Authentication: JWT
+* AI Module: **Custom-built (rule-based / ML-based internal system)**
+* Storage (Optional): AWS S3
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone Repository
+
+```bash
+git clone <your-repo-url>
+cd <project-folder>
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Run Project
+
+```bash
+npm run dev
+```
+
+---
+
+## 🎯 Features
+
+* User Authentication (JWT based)
+* Resume Builder (CRUD operations)
+* Template Selection with Live Preview
+* PDF Export
+* **In-house AI Feedback & ATS Scoring**
+* Admin Panel
+
+---
+
+# 🤖 AI Module (In-House)
+
+## 📌 Overview
+
+The AI system is built internally and analyzes resumes based on:
+
+* Content quality
+* Structure and formatting
+* ATS compatibility
+
+## ⚙️ How It Works
+
+* Uses predefined rules and scoring logic
+* Evaluates keywords, sections, and formatting
+* Generates:
+
+  * Content Score (0–100)
+  * Structure Score (0–100)
+  * ATS Score (0–100)
+  * Suggestions for improvement
+
+## ✅ Advantages
+
+* No dependency on external APIs
+* Faster response time
+* Fully customizable logic
+* Cost-efficient
+
+---
+
+# 🎨 Prettier Setup in VS Code
+
+## 📌 What is Prettier?
+
+Prettier is a code formatter that automatically formats your code to maintain consistency.
+
+## 🧩 Installation Steps
+
+### 1. Install Extension
+
+* Open VS Code
+* Go to Extensions
+* Search: **Prettier - Code formatter**
+* Install
+
+### 2. Install in Project
+
+```bash
+npm install --save-dev prettier
+```
+
+### 3. Create Config File
+
+Create `.prettierrc` in root:
+
+```json
+{
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5"
+}
+```
+
+### 4. Enable Format on Save
+
+* Open Settings
+* Search: `Format On Save`
+* Enable it
+
+### 5. Set Default Formatter
+
+* Search: `Default Formatter`
+* Select **Prettier**
+
+---
+
+# 🌿 Git Branching Strategy
+
+## 📌 Naming Convention
+
+We follow **User Story based branching**:
+
+```bash
+feature/US1-login
+feature/US2-resume-builder
+feature/US3-pdf-export
+```
+
+---
+
+## 🔄 Workflow
+
+1. Create branch from `develop`:
+
+```bash
+git checkout develop
+git pull
+git checkout -b feature/US1-login
+```
+
+2. Work on your feature
+
+3. Commit changes:
+
+```bash
+git add .
+git commit -m "US1: add login API and validation"
+```
+
+4. Push branch:
+
+```bash
+git push origin feature/US1-login
+```
+
+5. Create Pull Request → `develop`
+
+---
+
+# ⚠️ Git Rules (IMPORTANT)
+
+## ❌ DO NOT:
+
+* ❌ Push directly to `master`
+* ❌ Push untested code
+* ❌ Use unclear commit messages
+
+## ✅ ALWAYS:
+
+* ✅ Create feature branches
+* ✅ Use Pull Requests (PR)
+* ✅ Get code review before merging
+* ✅ Keep commits clean and meaningful
+
+---
+
+# ✍️ Commit Message Rules
+
+## Format:
+
+```bash
+US<number>: short description
+```
+
+## Examples:
+
+```bash
+US1: add login API
+US2: implement resume form UI
+US3: fix PDF export bug
+```
+
+---
+
+# 📂 Branch Structure
+
+```bash
+master (protected)
+   ↑
+develop
+   ↑
+feature/US1-login
+feature/US2-builder
+feature/US3-ai-feedback
+```
+
+---
+
+# 🔐 Best Practices
+
+* Follow Prettier formatting
+* Keep PRs small and focused
+* Test before pushing
+* Use meaningful branch names
+
+---
+
+# 👥 Team Members
+
+* Vipul Singh
+* Muhammad Nouman Qaiser
+* Kalana Madu Kalanchige
+* Junjie Lu
+
+---
+
+# 📄 License
+
+This project is for academic purposes (SIT725 – Deakin University).
+
+---

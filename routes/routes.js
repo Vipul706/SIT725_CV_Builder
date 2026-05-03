@@ -12,7 +12,7 @@ const routePaths = [
 async function startServer (app) {
   try {
     const port = process.env.PORT || 3000
-    initDatabase()
+    await initDatabase()
     for (const routes of routePaths) {
       const router = routes.router(routes.middlewares)
 

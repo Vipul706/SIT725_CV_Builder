@@ -35,10 +35,7 @@ async function registerTables () {
           if (file.includes('.table') && file.endsWith('.js')) {
             const fullPath = path.join(folderPath, file)
             const fileUrl = pathToFileURL(fullPath).href
-
             await import(fileUrl)
-
-            console.log(`${folder}/${file} registered`)
           }
         }
       }

@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { User } from '../model/user/user.table.js'
+import { AuthToken } from '../model/authToken/authToken.table.js'
 
 // ─── US1: User Registration ────────────────────────────────────────────────
 const userSignUp = async (req, res) => {
@@ -97,4 +98,35 @@ const userLogin = async (req, res) => {
   }
 }
 
-export { userSignUp, userLogin }
+// ─── US3: User Logout ─────────────────────────────────────────────────────
+const userLogout = async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization']
+    const token = authHeader.split(' ')[1]
+
+    // Decode to get natural expiry (token already verified in authenticate middleware)
+    const decoded = jwt.decode(token)
+
+    // Blacklist the token until it naturally expires
+    // Any future request with this token will be rejected by authenticate middleware
+    await AuthToken.create({
+      userId: req.user.id,
+      token,
+      expiresAt: new Date(decoded.exp * 1000) // convert JWT exp (seconds) to Date
+    })
+
+    return res.status(200).json({
+      success: true,
+      message: 'Logged out successfully.',
+      redirectTo: '/'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during logout.',
+      error: error.message
+    })
+  }
+}
+
+export { userSignUp, userLogin, userLogout }

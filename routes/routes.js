@@ -1,4 +1,5 @@
 import { userRoute } from './user/userRoute.js'
+import { initDatabase } from '../model/registerTables.js'
 
 const routePaths = [
   {
@@ -11,7 +12,7 @@ const routePaths = [
 async function startServer (app) {
   try {
     const port = process.env.PORT || 3000
-
+    await initDatabase()
     for (const routes of routePaths) {
       const router = routes.router(routes.middlewares)
 

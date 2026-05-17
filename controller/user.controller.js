@@ -1,6 +1,9 @@
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 import { User } from '../model/user/user.table.js'
+import { AuthToken } from '../model/authToken/authToken.table.js'
 
+// ─── US1: User Registration ────────────────────────────────────────────────
 const userSignUp = async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body
@@ -42,4 +45,88 @@ const userSignUp = async (req, res) => {
   }
 }
 
-export { userSignUp }
+// ─── US2: User Login ───────────────────────────────────────────────────────
+const userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body
+
+    // Find user by email
+    const user = await User.findOne({ email })
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password.'
+      })
+    }
+
+    // Compare submitted password against stored bcrypt hash
+    const isMatch = await bcrypt.compare(password, user.passwordHash)
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password.'
+      })
+    }
+
+    // Sign JWT — payload carries id, email, role; expires in 1 day
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    )
+
+    return res.status(200).json({
+      success: true,
+      message: 'Login successful.',
+      token,
+      data: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role
+      }
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Server error.',
+      error: error.message
+    })
+  }
+}
+
+// ─── US3: User Logout ─────────────────────────────────────────────────────
+const userLogout = async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization']
+    const token = authHeader.split(' ')[1]
+
+    // Decode to get natural expiry (token already verified in authenticate middleware)
+    const decoded = jwt.decode(token)
+
+    // Blacklist the token until it naturally expires
+    // Any future request with this token will be rejected by authenticate middleware
+    await AuthToken.create({
+      userId: req.user.id,
+      token,
+      expiresAt: new Date(decoded.exp * 1000) // convert JWT exp (seconds) to Date
+    })
+
+    return res.status(200).json({
+      success: true,
+      message: 'Logged out successfully.',
+      redirectTo: '/'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during logout.',
+      error: error.message
+    })
+  }
+}
+
+export { userSignUp, userLogin, userLogout }

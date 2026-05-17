@@ -1,3 +1,4 @@
+import express from 'express'
 import { userRoute } from './user/userRoute.js'
 import { initDatabase } from '../model/registerTables.js'
 
@@ -13,6 +14,10 @@ async function startServer (app) {
   try {
     const port = process.env.PORT || 3000
     await initDatabase()
+
+    // Required: parse incoming JSON request bodies
+    app.use(express.json())
+
     for (const routes of routePaths) {
       const router = routes.router(routes.middlewares)
 

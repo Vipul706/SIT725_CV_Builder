@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CVCraft AI — Build a CV that gets you noticed</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #3B7EF6;
+    --blue-dark: #2563d4;
+    --blue-light: #EBF2FF;
+    --green: #22C55E;
+    --orange: #F59E0B;
+    --red: #EF4444;
+    --text: #111827;
+    --text-2: #6B7280;
+    --text-3: #9CA3AF;
+    --border: #E5E7EB;
+    --bg: #F3F4F6;
+    --white: #FFFFFF;
+    --card: #FFFFFF;
+    --sidebar-w: 210px;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.06);
+    --shadow-md: 0 4px 24px rgba(0,0,0,.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== PAGE SYSTEM ===== */
+  .page { display: none; min-height: 100vh; }
+  .page.active { display: flex; }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px; font-family: inherit; font-size: 14px; font-weight: 500;
+    padding: 9px 18px; border-radius: var(--radius-sm); border: none;
+    cursor: pointer; transition: all .18s ease; white-space: nowrap;
+  }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,126,246,.35); }
+  .btn-outline { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+  .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+  .btn-ghost { background: transparent; color: var(--text-2); border: none; }
+  .btn-ghost:hover { background: var(--bg); color: var(--text); }
+  .btn-sm { padding: 6px 14px; font-size: 13px; }
+  .btn-lg { padding: 13px 28px; font-size: 16px; font-weight: 600; }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+  }
+
+  /* ===== BADGE ===== */
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 100px; font-size: 12px; font-weight: 500;
+  }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-green { background: #DCFCE7; color: #15803D; }
+  .badge-orange { background: #FEF3C7; color: #92400E; }
+
+  /* ===========================
+     PAGE 1 — LANDING
+  =========================== */
+  #landing {
+    flex-direction: column;
+    background: var(--white);
+  }
+
+  /* Nav */
+  .landing-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: #fff; z-index: 10;
+  }
+  .logo { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; }
+  .logo-dot { width: 9px; height: 9px; background: var(--blue); border-radius: 50%; }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--text-2); font-size: 14px; font-weight: 500; transition: color .15s; }
+  .nav-links a:hover { color: var(--text); }
+
+  /* Hero */
+  .landing-hero {
+    text-align: center; padding: 80px 20px 60px;
+    max-width: 680px; margin: 0 auto;
+  }
+  .hero-pill {
+    display: inline-block; background: var(--bg); border: 1px solid var(--border);
+    padding: 5px 14px; border-radius: 100px; font-size: 13px; color: var(--text-2);
+    margin-bottom: 28px; font-weight: 500;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 52px; line-height: 1.12; color: var(--text);
+    margin-bottom: 20px;
+  }
+  .hero-title span { color: var(--blue); }
+  .hero-sub { color: var(--text-2); font-size: 17px; line-height: 1.65; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 12px; justify-content: center; margin-bottom: 60px; }
+  .hero-stats { display: flex; gap: 48px; justify-content: center; }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 700; color: var(--text); }
+  .stat-label { font-size: 12px; color: var(--text-3); margin-top: 3px; }
+
+  /* Templates section */
+  .landing-section { max-width: 840px; margin: 0 auto; padding: 0 24px 80px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .section-title { font-size: 22px; font-weight: 700; }
+  .view-all-link { color: var(--blue); font-size: 14px; cursor: pointer; text-decoration: none; font-weight: 500; }
+  .view-all-link:hover { text-decoration: underline; }
+
+  .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+  .template-card {
+    border: 2px solid var(--border); border-radius: var(--radius);
+    padding: 0; cursor: pointer; transition: all .2s; overflow: hidden;
+    background: #fff; position: relative;
+  }
+  .template-card:hover, .template-card.selected { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,126,246,.12); }
+  .template-popular-badge {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--blue); color: #fff; font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 100px;
+  }
+  .template-preview {
+    height: 160px; background: var(--bg); margin: 12px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .template-mini { width: 90%; height: 90%; background: #fff; border-radius: 6px; padding: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .mini-header-bar { height: 6px; background: var(--blue); border-radius: 3px; margin-bottom: 6px; width: 60%; }
+  .mini-avatar { width: 16px; height: 16px; border-radius: 50%; background: var(--blue); float: left; margin-right: 6px; }
+  .mini-lines { clear: both; }
+  .mini-line { height: 3px; background: var(--border); border-radius: 2px; margin: 4px 0; }
+  .mini-line.w80 { width: 80%; } .mini-line.w60 { width: 60%; } .mini-line.w90 { width: 90%; } .mini-line.w40 { width: 40%; }
+  .template-info { padding: 0 14px 14px; }
+  .template-name { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+  .template-desc { font-size: 12px; color: var(--text-3); }
+
+  /* Features */
+  .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .feature-card { background: var(--bg); border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); }
+  .feature-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+  .feature-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+  /* ===========================
+     PAGE 2 — LOGIN
+  =========================== */
+  #login {
+    background: #EEF2F7;
+    align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .login-box {
+    display: grid; grid-template-columns: 1fr 1fr;
+    width: 100%; max-width: 860px;
+    border-radius: 20px; overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+  .login-left {
+    background: var(--blue); padding: 44px 40px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .login-logo { display: flex; align-items: center; gap: 9px; color: #fff; font-weight: 700; font-size: 17px; }
+  .login-logo-dot { width: 9px; height: 9px; background: rgba(255,255,255,.7); border-radius: 50%; }
+  .login-headline { font-family: 'DM Serif Display', serif; font-size: 34px; color: #fff; line-height: 1.2; margin: 36px 0 16px; }
+  .login-sub { color: rgba(255,255,255,.78); font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
+  .login-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+  .login-features li { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,.9); font-size: 14px; }
+  .lf-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.4); flex-shrink: 0; }
+  .login-quote {
+    background: rgba(255,255,255,.12); border-radius: 10px; padding: 16px 18px;
+    color: rgba(255,255,255,.9); font-size: 13px; font-style: italic; line-height: 1.6;
+  }
+  .login-quote-author { margin-top: 8px; color: rgba(255,255,255,.6); font-size: 12px; font-style: normal; }
+
+  .login-right { background: #fff; padding: 44px 40px; }
+  .login-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .login-new { font-size: 14px; color: var(--text-2); margin-bottom: 30px; }
+  .login-new a { color: var(--blue); cursor: pointer; font-weight: 500; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 7px; }
+  .form-input {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); font-family: inherit; font-size: 14px;
+    color: var(--text); transition: border-color .15s; outline: none;
+  }
+  .form-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,126,246,.1); }
+  .form-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .form-check { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+  .form-check input { accent-color: var(--blue); width: 14px; height: 14px; }
+  .forgot-link { color: var(--blue); font-size: 13px; cursor: pointer; font-weight: 500; }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--text-3); font-size: 13px; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .btn-google {
+    width: 100%; padding: 10px; border: 1.5px solid var(--border);
+    background: #fff; border-radius: var(--radius-sm); font-family: inherit;
+    font-size: 14px; font-weight: 500; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; gap: 10px;
+    transition: border-color .15s;
+  }
+  .btn-google:hover { border-color: var(--blue); }
+  .g-logo { width: 18px; height: 18px; }
+  .signup-link { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-2); }
+  .signup-link a { color: var(--blue); font-weight: 500; cursor: pointer; }
+
+  /* ===========================
+     PAGE 3 — DASHBOARD
+  =========================== */
+  #dashboard { flex-direction: row; background: var(--bg); }
+
+  /* Sidebar */
+  .sidebar {
+    width: var(--sidebar-w); background: #fff; border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; min-height: 100vh;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .sidebar-logo {
+    display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 16px;
+    padding: 22px 20px 20px; border-bottom: 1px solid var(--border);
+  }
+  .sidebar-section-label {
+    padding: 18px 20px 6px; font-size: 11px; font-weight: 600;
+    color: var(--text-3); letter-spacing: .06em; text-transform: uppercase;
+  }
+  .sidebar-nav { flex: 1; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px; padding: 9px 20px;
+    font-size: 14px; color: var(--text-2); cursor: pointer; border-radius: 0;
+    transition: all .15s; font-weight: 500;
+  }
+  .sidebar-item:hover { background: var(--bg); color: var(--text); }
+  .sidebar-item.active { background: var(--blue-light); color: var(--blue); }
+  .sidebar-item svg { flex-shrink: 0; }
+  .sidebar-user {
+    display: flex; align-items: center; gap: 10px; padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .user-avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--blue);
+    color: #fff; font-weight: 700; font-size: 13px; display: flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-name { font-size: 13px; font-weight: 600; }
+  .user-plan { font-size: 11px; color: var(--text-3); }
+
+  /* Dashboard main */
+  .dash-main { flex: 1; overflow-y: auto; padding: 32px 36px; }
+  .dash-topbar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+  .dash-greeting { font-size: 26px; font-weight: 700; margin-bottom: 5px; }
+  .dash-sub { color: var(--text-2); font-size: 14px; }
+
+  /* Stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 30px; }
+  .stat-card { padding: 20px 22px; }
+  .stat-card-label { font-size: 12px; color: var(--text-3); font-weight: 500; margin-bottom: 8px; }
+  .stat-card-num { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .stat-card-sub { font-size: 12px; color: var(--text-3); }
+
+  /* CV cards */
+  .cv-section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cv-section-title { font-size: 17px; font-weight: 700; }
+  .cv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+  .cv-card { padding: 16px; cursor: pointer; transition: box-shadow .2s; }
+  .cv-card:hover { box-shadow: var(--shadow-md); }
+  .cv-card-draft { border: 1.5px dashed var(--border); background: #FAFAFA; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; }
+  .cv-preview-mini {
+    height: 130px; background: var(--bg); border-radius: 8px;
+    margin-bottom: 14px; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .cv-score-badge {
+    position: absolute; top: 8px; right: 8px;
+    font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 100px;
+  }
+  .score-good { background: #DCFCE7; color: #15803D; }
+  .score-ok { background: #FEF3C7; color: #92400E; }
+  .cv-card-name { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+  .cv-card-meta { font-size: 12px; color: var(--text-3); margin-bottom: 14px; }
+  .cv-card-actions { display: flex; gap: 8px; }
+  .draft-label { font-size: 13px; color: var(--text-3); margin-bottom: 12px; }
+  .draft-cv-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .draft-cv-meta { font-size: 12px; color: var(--text-3); margin-bottom: 16px; }
+
+  /* Bottom panels */
+  .dash-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .panel-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; }
+  .template-thumb-row { display: flex; gap: 10px; }
+  .template-thumb {
+    flex: 1; background: var(--bg); border-radius: 8px; border: 1px solid var(--border);
+    display: flex; flex-direction: column; align-items: center; padding: 10px 8px 8px;
+    cursor: pointer; transition: border-color .15s;
+  }
+  .template-thumb:hover { border-color: var(--blue); }
+  .template-thumb-preview { width: 44px; height: 56px; background: #fff; border-radius: 4px; margin-bottom: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+  .template-thumb-name { font-size: 11px; font-weight: 500; text-align: center; color: var(--text-2); }
+  .template-more { flex: 0 0 50px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+  .template-more span { font-size: 11px; color: var(--text-3); font-weight: 500; text-align: center; }
+
+  .activity-list { display: flex; flex-direction: column; gap: 0; }
+  .activity-item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-dot { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; }
+  .activity-text { flex: 1; font-size: 13px; line-height: 1.4; }
+  .activity-text strong { font-weight: 600; }
+  .activity-time { font-size: 12px; color: var(--text-3); }
+
+  /* ===========================
+     PAGE 4 — EDITOR
+  =========================== */
+  #editor { flex-direction: column; background: var(--bg); }
+  .editor-topbar {
+    background: #fff; border-bottom: 1px solid var(--border);
+    padding: 14px 28px; display: flex; align-items: center;
+    gap: 14px; position: sticky; top: 0; z-index: 10;
+  }
+  .template-tag {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 100px; padding: 4px 12px; font-size: 13px; font-weight: 500;
+  }
+  .editor-actions { margin-left: auto; display: flex; gap: 10px; }
+
+  .editor-body { display: grid; grid-template-columns: 1fr 1fr; flex: 1; min-height: calc(100vh - 61px); }
+
+  /* Left panel */
+  .editor-left { padding: 28px 28px; border-right: 1px solid var(--border); overflow-y: auto; background: #fff; }
+  .editor-section-label { font-size: 11px; font-weight: 600; color: var(--text-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 18px; }
+
+  .tab-row { display: flex; gap: 4px; background: var(--bg); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 24px; width: fit-content; }
+  .tab {
+    padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 500;
+    color: var(--text-2); cursor: pointer; transition: all .15s; border: none; background: none; font-family: inherit;
+  }
+  .tab.active { background: #fff; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-group-full { margin-bottom: 14px; }
+  textarea.form-input { resize: vertical; min-height: 90px; }
+
+  /* Right panel - live preview */
+  .editor-right { background: var(--bg); padding: 28px; overflow-y: auto; display: flex; justify-content: center; }
+  .live-preview-label { font-size: 11px; font-weight: 600; color: var(--text-3); letter-spacing: .07em; text-transform: uppercase; margin-bottom: 18px; }
+  .cv-preview-sheet {
+    background: #fff; width: 100%; max-width: 400px; min-height: 520px;
+    border-radius: 10px; box-shadow: var(--shadow-md);
+    padding: 28px 24px; font-family: 'DM Sans', sans-serif;
+  }
+  .preview-header-bar { height: 4px; background: var(--blue); border-radius: 2px; margin-bottom: 18px; }
+  .preview-name { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .preview-title { font-size: 13px; color: var(--blue); font-weight: 500; margin-bottom: 10px; }
+  .preview-contact { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--text-2); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 14px; }
+  .preview-section { margin-bottom: 16px; }
+  .preview-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: 8px; }
+  .skill-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .skill-name { font-size: 12px; width: 56px; }
+  .skill-bar-bg { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+  .skill-bar-fill { height: 4px; background: var(--blue); border-radius: 2px; }
+  .exp-item { margin-bottom: 12px; }
+  .exp-title { font-size: 13px; font-weight: 700; }
+  .exp-company { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+  .exp-desc { font-size: 11px; color: var(--text-2); line-height: 1.6; }
+
+  /* ===========================
+     PAGE 5 — AI REVIEW
+  =========================== */
+  #review {
+    align-items: center; justify-content: center;
+    background: var(--bg); padding: 40px 20px; flex-direction: column;
+  }
+  .review-card { width: 100%; max-width: 540px; }
+  .review-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+  }
+  .review-title { font-size: 16px; font-weight: 700; }
+
+  .review-score-block {
+    padding: 24px; border: 1px solid var(--border); border-radius: var(--radius);
+    margin: 20px 24px; display: flex; gap: 20px; align-items: flex-start;
+  }
+  .score-circle-wrap { position: relative; flex-shrink: 0; }
+  .score-circle-svg { transform: rotate(-90deg); }
+  .score-circle-bg { fill: none; stroke: var(--border); stroke-width: 8; }
+  .score-circle-fill { fill: none; stroke: var(--blue); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .8s ease; }
+  .score-circle-num {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800;
+  }
+  .score-main-num { font-size: 36px; font-weight: 800; margin-bottom: 4px; }
+  .score-status { color: var(--blue); font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .score-based { font-size: 12px; color: var(--text-3); }
+
+  .breakdown-label { font-size: 11px; font-weight: 600; color: var(--text-3); letter-spacing: .07em; text-transform: uppercase; padding: 0 24px; margin-bottom: 12px; }
+  .breakdown-list { padding: 0 24px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .breakdown-row { display: flex; align-items: center; gap: 12px; }
+  .breakdown-name { font-size: 13px; width: 130px; flex-shrink: 0; }
+  .breakdown-bar-bg { flex: 1; height: 6px; background: var(--border); border-radius: 3px; }
+  .breakdown-bar-fill { height: 6px; border-radius: 3px; transition: width .6s ease; }
+  .bar-blue { background: var(--blue); }
+  .bar-green { background: var(--green); }
+  .bar-orange { background: var(--orange); }
+  .breakdown-score { font-size: 13px; font-weight: 700; width: 28px; text-align: right; flex-shrink: 0; }
+  .score-blue { color: var(--blue); } .score-green { color: var(--green); } .score-orange { color: var(--orange); }
+
+  .suggestions-label { font-size: 11px; font-weight: 600; color: var(--text-3); letter-spacing: .07em; text-transform: uppercase; padding: 0 24px; margin-bottom: 12px; }
+  .suggestion-list { padding: 0 24px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .suggestion-item { background: var(--bg); border-radius: var(--radius-sm); padding: 14px 16px; font-size: 13px; line-height: 1.6; border: 1px solid var(--border); }
+  .suggestion-item strong { color: var(--text); }
+
+  .upload-cv-area {
+    margin: 0 24px 20px; border: 1.5px dashed var(--border); border-radius: var(--radius);
+    padding: 28px; text-align: center;
+  }
+  .upload-cv-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+  .upload-cv-sub { font-size: 12px; color: var(--text-3); margin-bottom: 14px; }
+
+  .review-actions {
+    padding: 16px 24px; border-top: 1px solid var(--border);
+    display: flex; gap: 10px; justify-content: flex-end;
+  }
+
+  /* ===========================
+     ANIMATIONS
+  =========================== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .page.active .animate-in { animation: fadeUp .35s ease forwards; }
+  .delay-1 { animation-delay: .05s; opacity: 0; }
+  .delay-2 { animation-delay: .12s; opacity: 0; }
+  .delay-3 { animation-delay: .19s; opacity: 0; }
+  .delay-4 { animation-delay: .26s; opacity: 0; }
+
+  /* ===========================
+     TOAST NOTIFICATION
+  =========================== */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: #fff; padding: 12px 22px; border-radius: 100px;
+    font-size: 14px; font-weight: 500; z-index: 9999; transition: transform .3s ease;
+    pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ================================
+     PAGE 1 — LANDING
+================================ -->
+<div id="landing" class="page active">
+  <nav class="landing-nav animate-in">
+    <div class="logo"><div class="logo-dot"></div> CVCraft AI</div>
+    <ul class="nav-links">
+      <li><a href="#">Templates</a></li>
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Examples</a></li>
+    </ul>
+    <button class="btn btn-primary" onclick="goTo('login')">Get started</button>
+  </nav>
+
+  <section class="landing-hero animate-in delay-1">
+    <div class="hero-pill">AI-powered resume builder</div>
+    <h1 class="hero-title">Build a CV that gets <span>you noticed</span></h1>
+    <p class="hero-sub">Choose a professional template, edit your details, and get instant AI feedback on how to improve your CV.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary btn-lg" onclick="goTo('login')">Browse templates</button>
+      <button class="btn btn-outline btn-lg" onclick="goTo('review')">Upload my CV</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">12+</div><div class="stat-label">Templates</div></div>
+      <div class="stat-item"><div class="stat-num">AI</div><div class="stat-label">Review score</div></div>
+      <div class="stat-item"><div class="stat-num">PDF</div><div class="stat-label">Export ready</div></div>
+      <div class="stat-item"><div class="stat-num">Free</div><div class="stat-label">No signup needed</div></div>
+    </div>
+  </section>
+
+  <div class="landing-section animate-in delay-2">
+    <div class="section-header">
+      <h2 class="section-title">Choose a template</h2>
+      <a class="view-all-link">View all →</a>
+    </div>
+    <div class="template-grid">
+      <div class="template-card selected" onclick="selectTemplate(this,'Modern Pro')">
+        <span class="template-popular-badge">Popular</span>
+        <div class="template-preview">
+          <div class="template-mini">
+            <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+              <div class="mini-avatar"></div>
+              <div style="flex:1"><div class="mini-line w60"></div><div class="mini-line w40" style="margin-top:3px"></div></div>
+            </div>
+            <div class="mini-line w90"></div><div class="mini-line w80"></div><div class="mini-line w60"></div><div class="mini-line w90"></div><div class="mini-line w40"></div>
+          </div>
+        </div>
+        <div class="template-info"><div class="template-name">Modern Pro</div><div class="template-desc">Clean two-column layout</div></div>
+      </div>
+      <div class="template-card" onclick="selectTemplate(this,'Classic')">
+        <div class="template-preview" style="background:#f0f4ff">
+          <div class="template-mini">
+            <div class="mini-header-bar" style="width:100%;height:8px;margin-bottom:10px"></div>
+            <div class="mini-line w80"></div><div class="mini-line w60"></div><div class="mini-line w90"></div><div class="mini-line w80"></div><div class="mini-line w40"></div>
+          </div>
+        </div>
+        <div class="template-info"><div class="template-name">Classic</div><div class="template-desc">Traditional single-column</div></div>
+      </div>
+      <div class="template-card" onclick="selectTemplate(this,'Sidebar')">
+        <div class="template-preview">
+          <div class="template-mini" style="display:grid;grid-template-columns:30% 1fr;gap:5px">
+            <div style="background:var(--blue-light);border-radius:3px;padding:4px">
+              <div class="mini-avatar" style="float:none;width:12px;height:12px;margin:0 auto 5px"></div>
+              <div class="mini-line" style="width:100%"></div><div class="mini-line" style="width:80%"></div>
+            </div>
+            <div><div class="mini-line w90"></div><div class="mini-line w60"></div><div class="mini-line w80"></div><div class="mini-line w40"></div></div>
+          </div>
+        </div>
+        <div class="template-info"><div class="template-name">Sidebar</div><div class="template-desc">Skills-focused sidebar</div></div>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="margin-bottom:16px">What you can do</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-title">Edit your details</div>
+        <div class="feature-desc">Fill in your info using the template's structure — name, experience, skills, and more.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">Upload existing CV</div>
+        <div class="feature-desc">Already have a CV? Upload it and get an AI review score instantly.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">AI feedback score</div>
+        <div class="feature-desc">Get a score out of 100 with specific tips to improve your CV's impact.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">Download as PDF</div>
+        <div class="feature-desc">Export your finished CV as a clean, print-ready PDF file.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================
+     PAGE 2 — LOGIN
+================================ -->
+<div id="login" class="page">
+  <div class="login-box animate-in">
+    <div class="login-left">
+      <div class="login-logo"><div class="login-logo-dot"></div> CVCraft AI</div>
+      <div>
+        <h1 class="login-headline">Your career starts with a great CV</h1>
+        <p class="login-sub">Build a professional, ATS-friendly resume in minutes with our AI-powered builder and get instant feedback.</p>
+        <ul class="login-features">
+          <li><div class="lf-dot"></div> 12+ professional templates</li>
+          <li><div class="lf-dot"></div> AI-powered review &amp; score</li>
+          <li><div class="lf-dot"></div> Download as PDF instantly</li>
+          <li><div class="lf-dot"></div> Edit anytime, save your progress</li>
+        </ul>
+      </div>
+      <div class="login-quote">
+        "Got the interview within a week of using CVCraft. The AI suggestions made a huge difference."
+        <div class="login-quote-author">— Sarah K., Graduate Student</div>
+      </div>
+    </div>
+
+    <div class="login-right">
+      <h2 class="login-title">Welcome back</h2>
+      <p class="login-new">New here? <a onclick="goTo('dashboard')">Create a free account</a></p>
+
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" class="form-input" value="alex@email.com" placeholder="you@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" value="••••••••••" placeholder="Password">
+      </div>
+      <div class="form-row">
+        <label class="form-check"><input type="checkbox" checked> Remember me</label>
+        <a class="forgot-link">Forgot password?</a>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="goTo('dashboard')">Sign in</button>
+      <div class="divider">or continue with</div>
+      <button class="btn-google" onclick="goTo('dashboard')">
+        <svg class="g-logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Sign in with Google
+      </button>
+      <div class="signup-link">Don't have an account? <a onclick="goTo('dashboard')">Sign up free</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================
+     PAGE 3 — DASHBOARD
+================================ -->
+<div id="dashboard" class="page">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-dot"></div> CVCraft AI</div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+      <div class="sidebar-item active" onclick="setActive(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="sidebar-item" onclick="goTo('editor');setActive(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        My CVs
+      </div>
+      <div class="sidebar-item" onclick="setActive(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="3"/></svg>
+        Templates
+      </div>
+      <div class="sidebar-item" onclick="goTo('review');setActive(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        AI Review
+      </div>
+      <div class="sidebar-section-label">Account</div>
+      <div class="sidebar-item" onclick="setActive(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Settings
+      </div>
+      <div class="sidebar-item" onclick="setActive(this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Help
+      </div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">AJ</div>
+      <div class="user-info">
+        <div class="user-name">Alex Johnson</div>
+        <div class="user-plan">Free plan</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+    <div class="dash-topbar animate-in">
+      <div>
+        <div class="dash-greeting">Welcome back, Alex 👋</div>
+        <div class="dash-sub">Here's what's happening with your CVs</div>
+      </div>
+      <button class="btn btn-primary" onclick="goTo('editor')">+ New CV</button>
+    </div>
+
+    <div class="stats-grid animate-in delay-1">
+      <div class="card stat-card">
+        <div class="stat-card-label">My CVs</div>
+        <div class="stat-card-num">3</div>
+        <div class="stat-card-sub">2 active, 1 draft</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-card-label">Best AI score</div>
+        <div class="stat-card-num">78</div>
+        <div class="stat-card-sub">Out of 100</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-card-label">Downloads</div>
+        <div class="stat-card-num">5</div>
+        <div class="stat-card-sub">This month</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-card-label">Templates used</div>
+        <div class="stat-card-num">2</div>
+        <div class="stat-card-sub">of 12 available</div>
+      </div>
+    </div>
+
+    <div class="animate-in delay-2">
+      <div class="cv-section-header">
+        <div class="cv-section-title">My CVs</div>
+        <a class="view-all-link">View all →</a>
+      </div>
+      <div class="cv-grid">
+        <!-- CV 1 -->
+        <div class="card cv-card">
+          <div class="cv-preview-mini">
+            <span class="cv-score-badge score-good">78 / 100</span>
+            <div style="width:75%;height:80%;background:#fff;border-radius:6px;padding:8px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
+              <div style="height:4px;background:var(--blue);border-radius:2px;margin-bottom:8px;width:60%"></div>
+              <div style="height:3px;background:var(--border);border-radius:2px;width:80%;margin-bottom:4px"></div>
+              <div style="height:3px;background:var(--border);border-radius:2px;width:60%;margin-bottom:4px"></div>
+              <div style="height:3px;background:var(--border);border-radius:2px;width:90%"></div>
+            </div>
+          </div>
+          <div class="cv-card-name">Software Engineer CV</div>
+          <div class="cv-card-meta">Edited 2 days ago · Modern Pro</div>
+          <div class="cv-card-actions">
+            <button class="btn btn-outline btn-sm" onclick="goTo('editor')">Edit</button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('PDF downloaded!')">PDF</button>
+            <button class="btn btn-primary btn-sm" onclick="goTo('review')">Review</button>
+          </div>
+        </div>
+        <!-- CV 2 -->
+        <div class="card cv-card">
+          <div class="cv-preview-mini">
+            <span class="cv-score-badge score-ok">62 / 100</span>
+            <div style="width:75%;height:80%;background:#fff;border-radius:6px;padding:8px;box-shadow:0 1px 6px rgba(0,0,0,.08)">
+              <div style="height:8px;background:var(--blue-light);border-radius:2px;margin-bottom:8px;width:100%"></div>
+              <div style="height:3px;background:var(--border);border-radius:2px;width:80%;margin-bottom:4px"></div>
+              <div style="height:3px;background:var(--border);border-radius:2px;width:60%;margin-bottom:4px"></div>
+              <div style="height:3px;background:var(--border);border-radius:2px;width:70%"></div>
+            </div>
+          </div>
+          <div class="cv-card-name">Internship CV</div>
+          <div class="cv-card-meta">Edited 1 week ago · Classic</div>
+          <div class="cv-card-actions">
+            <button class="btn btn-outline btn-sm" onclick="goTo('editor')">Edit</button>
+            <button class="btn btn-outline btn-sm" onclick="showToast('PDF downloaded!')">PDF</button>
+            <button class="btn btn-primary btn-sm" onclick="goTo('review')">Review</button>
+          </div>
+        </div>
+        <!-- CV 3 - Draft -->
+        <div class="card cv-card cv-card-draft">
+          <div class="draft-label">New draft</div>
+          <div class="draft-cv-name">Draft CV</div>
+          <div class="draft-cv-meta">Started today · No template</div>
+          <button class="btn btn-outline" onclick="goTo('editor')">Continue editing</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-bottom animate-in delay-3">
+      <!-- Browse templates -->
+      <div class="card" style="padding:20px 22px">
+        <div class="panel-title">Browse templates</div>
+        <div class="template-thumb-row">
+          <div class="template-thumb" onclick="showToast('Modern Pro selected')">
+            <div class="template-thumb-preview" style="background:linear-gradient(135deg,#EBF2FF 0%,#fff 100%);border:1px solid var(--border)"></div>
+            <div class="template-thumb-name">Modern Pro</div>
+          </div>
+          <div class="template-thumb" onclick="showToast('Classic selected')">
+            <div class="template-thumb-preview" style="background:linear-gradient(135deg,#f0f4ff 0%,#fff 100%);border:1px solid var(--border)"></div>
+            <div class="template-thumb-name">Classic</div>
+          </div>
+          <div class="template-thumb" onclick="showToast('Sidebar selected')">
+            <div class="template-thumb-preview" style="background:linear-gradient(135deg,#f5f5f5 0%,#fff 100%);border:1px solid var(--border)"></div>
+            <div class="template-thumb-name">Sidebar</div>
+          </div>
+          <div class="template-more" onclick="showToast('Browsing all templates')">
+            <span>9<br>more</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="card" style="padding:20px 22px">
+        <div class="panel-title">Recent activity</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-dot" style="background:#EBF2FF"></div>
+            <div class="activity-text">Edited <strong>Software Engineer CV</strong></div>
+            <div class="activity-time">2d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:#DCFCE7"></div>
+            <div class="activity-text">Downloaded PDF of <strong>Software Engineer CV</strong></div>
+            <div class="activity-time">2d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:#EBF2FF"></div>
+            <div class="activity-text">AI review run — score <strong>78/100</strong></div>
+            <div class="activity-time">3d ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:#FEF3C7"></div>
+            <div class="activity-text">Created <strong>Internship CV</strong> from Classic template</div>
+            <div class="activity-time">1w ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ================================
+     PAGE 4 — EDITOR
+================================ -->
+<div id="editor" class="page">
+  <div class="editor-topbar">
+    <button class="btn btn-ghost btn-sm" onclick="goTo('dashboard')">← Back</button>
+    <span class="template-tag">Modern Pro</span>
+    <div class="editor-actions">
+      <button class="btn btn-outline btn-sm" onclick="showToast('Preview opened')">Preview</button>
+      <button class="btn btn-outline btn-sm" onclick="showToast('PDF downloaded!')">PDF</button>
+      <button class="btn btn-primary btn-sm" onclick="goTo('review')">AI Review</button>
+    </div>
+  </div>
+
+  <div class="editor-body">
+    <!-- Left: form -->
+    <div class="editor-left">
+      <div class="editor-section-label">Edit Your Details</div>
+      <div class="tab-row">
+        <button class="tab active" onclick="switchTab(this,'personal-tab')">Personal</button>
+        <button class="tab" onclick="switchTab(this,'experience-tab')">Experience</button>
+        <button class="tab" onclick="switchTab(this,'skills-tab')">Skills</button>
+        <button class="tab" onclick="switchTab(this,'education-tab')">Education</button>
+      </div>
+
+      <!-- Personal -->
+      <div id="personal-tab">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input class="form-input" value="Alex" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input class="form-input" value="Johnson" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="form-group-full">
+          <label class="form-label">Professional title</label>
+          <input class="form-input" value="Software Engineer" oninput="updatePreview()">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" value="alex@email.com" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-input" value="+61 400 000 000">
+          </div>
+        </div>
+        <div class="form-group-full">
+          <label class="form-label">LinkedIn</label>
+          <input class="form-input" value="linkedin.com/in/alexj">
+        </div>
+        <div class="form-group-full">
+          <label class="form-label">Summary</label>
+          <textarea class="form-input">Passionate software engineer with 3+ years of experience building scalable web applications and leading small teams.</textarea>
+        </div>
+        <button class="btn btn-primary" onclick="showToast('Changes saved!')">Save changes</button>
+      </div>
+
+      <!-- Experience (hidden by default) -->
+      <div id="experience-tab" style="display:none">
+        <div class="form-group-full">
+          <label class="form-label">Job title</label>
+          <input class="form-input" value="Junior Developer">
+        </div>
+        <div class="form-group-full">
+          <label class="form-label">Company</label>
+          <input class="form-input" value="Acme Corp">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Start date</label>
+            <input class="form-input" value="Jan 2022">
+          </div>
+          <div class="form-group">
+            <label class="form-label">End date</label>
+            <input class="form-input" value="Present">
+          </div>
+        </div>
+        <div class="form-group-full">
+          <label class="form-label">Description</label>
+          <textarea class="form-input">Built and maintained React dashboards serving 5,000+ daily users. Led migration to TypeScript.</textarea>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="btn btn-outline btn-sm" onclick="showToast('New experience added')">+ Add another</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Experience saved!')">Save</button>
+        </div>
+      </div>
+
+      <!-- Skills (hidden) -->
+      <div id="skills-tab" style="display:none">
+        <div class="form-group-full">
+          <label class="form-label">Skill</label>
+          <input class="form-input" value="React" style="margin-bottom:10px">
+          <input class="form-input" value="Node.js" style="margin-bottom:10px">
+          <input class="form-input" value="Python" style="margin-bottom:10px">
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline btn-sm" onclick="showToast('Skill added')">+ Add skill</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Skills saved!')">Save</button>
+        </div>
+      </div>
+
+      <!-- Education (hidden) -->
+      <div id="education-tab" style="display:none">
+        <div class="form-group-full">
+          <label class="form-label">Degree</label>
+          <input class="form-input" value="Bachelor of Computer Science">
+        </div>
+        <div class="form-group-full">
+          <label class="form-label">Institution</label>
+          <input class="form-input" value="University of Melbourne">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label">Start year</label>
+            <input class="form-input" value="2019">
+          </div>
+          <div class="form-group">
+            <label class="form-label">End year</label>
+            <input class="form-input" value="2022">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showToast('Education saved!')">Save</button>
+      </div>
+    </div>
+
+    <!-- Right: live preview -->
+    <div class="editor-right">
+      <div style="width:100%;max-width:400px">
+        <div class="live-preview-label">Live Preview</div>
+        <div class="cv-preview-sheet">
+          <div class="preview-header-bar"></div>
+          <div class="preview-name" id="preview-name">Alex Johnson</div>
+          <div class="preview-title" id="preview-title">Software Engineer</div>
+          <div class="preview-contact">
+            <span id="preview-email">alex@email.com</span>
+            <span>+61 400 000 000</span>
+            <span>linkedin.com/in/alexj</span>
+          </div>
+          <div class="preview-section">
+            <div class="preview-section-title">Skills</div>
+            <div class="skill-row"><div class="skill-name">React</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:82%"></div></div></div>
+            <div class="skill-row"><div class="skill-name">Node.js</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:68%"></div></div></div>
+            <div class="skill-row"><div class="skill-name">Python</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:55%"></div></div></div>
+          </div>
+          <div class="preview-section">
+            <div class="preview-section-title">Experience</div>
+            <div class="exp-item">
+              <div class="exp-title">Junior Developer — Acme Corp</div>
+              <div class="exp-company">Jan 2022 – Present</div>
+              <div class="exp-desc">Built and maintained React dashboards serving 5,000+ daily users. Led migration to TypeScript.</div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-title">Intern — TechStart Pty Ltd</div>
+              <div class="exp-company">Jun 2021 – Dec 2021</div>
+              <div class="exp-desc">Assisted in backend API development using Node.js and Express.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================
+     PAGE 5 — AI REVIEW
+================================ -->
+<div id="review" class="page" style="flex-direction:column">
+  <div style="width:100%;max-width:540px;margin:0 auto;padding:32px 20px">
+    <!-- Back button -->
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:16px" onclick="goTo('dashboard')">← Back to dashboard</button>
+
+    <div class="card review-card animate-in">
+      <div class="review-header">
+        <div class="review-title">AI CV Review</div>
+        <span class="badge badge-blue">Powered by AI</span>
+      </div>
+
+      <!-- Score block -->
+      <div class="review-score-block">
+        <div class="score-circle-wrap">
+          <svg class="score-circle-svg" width="80" height="80" viewBox="0 0 80 80">
+            <circle class="score-circle-bg" cx="40" cy="40" r="34"/>
+            <circle class="score-circle-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="47" id="score-arc"/>
+          </svg>
+          <div class="score-circle-num">78</div>
+        </div>
+        <div>
+          <div class="score-main-num">78 / 100</div>
+          <div class="score-status">Good — room to improve</div>
+          <div class="score-based">Based on content, structure &amp; keywords</div>
+        </div>
+      </div>
+
+      <!-- Breakdown -->
+      <div class="breakdown-label">Score Breakdown</div>
+      <div class="breakdown-list">
+        <div class="breakdown-row">
+          <div class="breakdown-name">Content quality</div>
+          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-blue" style="width:82%"></div></div>
+          <div class="breakdown-score score-blue">82</div>
+        </div>
+        <div class="breakdown-row">
+          <div class="breakdown-name">Structure &amp; format</div>
+          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-green" style="width:90%"></div></div>
+          <div class="breakdown-score score-green">90</div>
+        </div>
+        <div class="breakdown-row">
+          <div class="breakdown-name">Keywords</div>
+          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-orange" style="width:65%"></div></div>
+          <div class="breakdown-score score-orange">65</div>
+        </div>
+        <div class="breakdown-row">
+          <div class="breakdown-name">Impact language</div>
+          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-orange" style="width:70%"></div></div>
+          <div class="breakdown-score score-orange">70</div>
+        </div>
+      </div>
+
+      <!-- Suggestions -->
+      <div class="suggestions-label">Suggestions to Improve</div>
+      <div class="suggestion-list">
+        <div class="suggestion-item"><strong>Add more keywords.</strong> Your CV is missing common industry terms like "CI/CD", "REST API", and "Agile" that recruiters scan for.</div>
+        <div class="suggestion-item"><strong>Quantify your achievements.</strong> Replace "managed a team" with measurable outcomes like "led a team of 4 to deliver the project 2 weeks early".</div>
+        <div class="suggestion-item"><strong>Structure looks great.</strong> Your formatting is clear and easy to scan — keep it consistent across all sections.</div>
+      </div>
+
+      <!-- Upload area -->
+      <div class="upload-cv-area">
+        <div class="upload-cv-title">Review an existing CV</div>
+        <div class="upload-cv-sub">Upload a PDF or Word file to get an AI score</div>
+        <button class="btn btn-primary btn-sm" onclick="showToast('File upload opened')">Upload CV file</button>
+      </div>
+
+      <!-- Actions -->
+      <div class="review-actions">
+        <button class="btn btn-outline btn-sm" onclick="reanalyse()">Re-analyse</button>
+        <button class="btn btn-primary btn-sm" onclick="goTo('editor')">Fix issues in editor</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ===== ROUTING =====
+  function goTo(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById(pageId);
+    target.classList.add('active');
+    window.scrollTo(0, 0);
+
+    // Trigger score arc animation on review page
+    if (pageId === 'review') {
+      setTimeout(() => {
+        const arc = document.getElementById('score-arc');
+        if (arc) {
+          const full = 2 * Math.PI * 34; // 213.6
+          const score = 78;
+          const offset = full - (score / 100) * full;
+          arc.style.strokeDashoffset = offset;
+        }
+      }, 100);
+    }
+  }
+
+  // ===== SIDEBAR ACTIVE =====
+  function setActive(el) {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // ===== TEMPLATE SELECTION =====
+  function selectTemplate(el, name) {
+    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    showToast(name + ' selected');
+  }
+
+  // ===== TAB SWITCHING =====
+  function switchTab(btn, tabId) {
+    // Deactivate all tabs
+    btn.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    // Hide all tab panels
+    ['personal-tab','experience-tab','skills-tab','education-tab'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    const panel = document.getElementById(tabId);
+    if (panel) panel.style.display = 'block';
+  }
+
+  // ===== LIVE PREVIEW UPDATE =====
+  function updatePreview() {
+    const inputs = document.querySelectorAll('#editor .form-input');
+    // first name + last name
+    const first = inputs[0]?.value || 'Alex';
+    const last = inputs[1]?.value || 'Johnson';
+    const title = inputs[2]?.value || 'Software Engineer';
+    const email = inputs[3]?.value || 'alex@email.com';
+    const nameEl = document.getElementById('preview-name');
+    const titleEl = document.getElementById('preview-title');
+    const emailEl = document.getElementById('preview-email');
+    if (nameEl) nameEl.textContent = `${first} ${last}`;
+    if (titleEl) titleEl.textContent = title;
+    if (emailEl) emailEl.textContent = email;
+  }
+
+  // ===== TOAST =====
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // ===== RE-ANALYSE =====
+  function reanalyse() {
+    const arc = document.getElementById('score-arc');
+    if (arc) {
+      arc.style.strokeDashoffset = 213.6; // reset
+      setTimeout(() => {
+        const full = 213.6;
+        const score = 78;
+        arc.style.strokeDashoffset = full - (score / 100) * full;
+      }, 80);
+    }
+    showToast('Re-analysing your CV...');
+  }
+
+  // Init: trigger score arc on first load if on review page
+  window.addEventListener('load', () => {
+    const arc = document.getElementById('score-arc');
+    if (arc) arc.style.strokeDashoffset = 213.6;
+  });
+</script>
+</body>
+</html>

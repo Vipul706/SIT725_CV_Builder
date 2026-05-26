@@ -1,11 +1,17 @@
 import express from 'express'
 import { userRoute } from './user/userRoute.js'
+import { aiFeedbackRoute } from './ai/aiFeedbackRoute.js'
 import { initDatabase } from '../model/registerTables.js'
 
 const routePaths = [
   {
     routepath: '/',
     router: userRoute,
+    middlewares: []
+  },
+  {
+    routepath: '/ai',
+    router: aiFeedbackRoute,
     middlewares: []
   }
 ]

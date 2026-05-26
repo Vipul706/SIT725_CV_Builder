@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "filename": "MUHAMMAD-NOUMAN-QAISER-.pdf",
+    "pages": 5,
+    "wordCount": 1198,
+    "processingTimeSeconds": 17.54
+  },
+  "feedback": {
+    "scores": {
+      "content": 60,
+      "structure": 40,
+      "ats": 45,
+      "overall": 50
+    },
+    "summary": "The resume presents a candidate with diverse experience in retail, e-commerce, and academic support, coupled with strong leadership and community involvement. However, its excessive length and inconsistent formatting significantly hinder readability and ATS compatibility. While some achievements are quantified, the core work experience lacks specific metrics, and the overall structure needs substantial refinement.",
+    "strengths": [
+      "Quantified Achievements (Activities): The 'Activities' section showcases impressive leadership, fundraising, and project management with specific numbers and impacts.",
+      "Diverse Experience: Experience spans retail management, e-commerce, logistics (implied), and academic roles, demonstrating adaptability.",
+      "Tailored Objective: The objective is clearly targeted to a specific role and company (Popcultcha's Warehouse & Logistics), showing intent."
+    ],
+    "weaknesses": [
+      "Excessive Length: At 5 pages, the resume is far too long, making it difficult for recruiters and ATS to process efficiently.",
+      "Inconsistent Structure & Formatting: Non-standard headings, scattered dates, and fragmented skill sections create a confusing and unprofessional presentation.",
+      "Limited Quantification in Core Experience: While activities are well-quantified, the primary 'WORK EXPERIENCE' descriptions lack specific metrics of success."
+    ],
+    "suggestions": [
+      {
+        "category": "Structure",
+        "priority": "High",
+        "suggestion": "Condense the entire resume to a maximum of two pages, prioritizing the most relevant experience and achievements for the target role.",
+        "impact": "A concise resume is more likely to be read by recruiters and efficiently parsed by ATS, increasing the chances of moving forward."
+      },
+      {
+        "category": "Formatting",
+        "priority": "High",
+        "suggestion": "Standardize all section headings (e.g., 'Work Experience,' 'Skills,' 'Volunteer Experience') and use consistent bullet points and date formats. Remove symbols from contact information.",
+        "impact": "Improves readability and ensures ATS can accurately identify and extract information from each section."
+      },
+      {
+        "category": "Content",
+        "priority": "Medium",
+        "suggestion": "Integrate the most impactful achievements from the 'Activities' section into a dedicated 'Volunteer Experience' or 'Leadership & Projects' section, using concise bullet points.",
+        "impact": "Highlights valuable soft skills and leadership experience without overwhelming the resume with excessive detail."
+      },
+      {
+        "category": "Content",
+        "priority": "Medium",
+        "suggestion": "Quantify achievements in the 'WORK EXPERIENCE' section with specific numbers, percentages, or results wherever possible.",
+        "impact": "Demonstrates concrete contributions and impact, making your experience more compelling and memorable to hiring managers."
+      },
+      {
+        "category": "Keywords",
+        "priority": "Low",
+        "suggestion": "Review the job description for the target 'Warehouse & Logistics' role and strategically incorporate relevant keywords (e.g., supply chain optimization, inventory control systems, shipping/receiving, order fulfillment) into your experience bullet points.",
+        "impact": "Increases the resume's visibility to ATS and signals to recruiters that you possess the specific skills required for the role."
+      }
+    ],
+    "keywords": {
+      "found": [
+        "logistics",
+        "retail operations",
+        "customer service",
+        "inventory management",
+        "sales",
+        "e-commerce",
+        "management",
+        "team collaboration",
+        "time management",
+        "problem-solving",
+        "AI",
+        "Machine Learning",
+        "Data Science",
+        "Python"
+      ],
+      "missing": [
+        "supply chain",
+        "warehouse management system",
+        "shipping",
+        "receiving",
+        "order fulfillment",
+        "stock control",
+        "material handling",
+        "freight",
+        "distribution",
+        "quality control"
+      ]
+    },
+    "sectionAnalysis": {
+      "hasContactInfo": true,
+      "hasSummary": true,
+      "hasExperience": true,
+      "hasEducation": true,
+      "hasSkills": true,
+      "hasAchievements": true
+    }
+  }
+}

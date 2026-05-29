@@ -583,17 +583,18 @@
 
       <div class="form-group">
         <label class="form-label">Email address</label>
-        <input type="email" class="form-input" value="alex@email.com" placeholder="you@email.com">
+        <input type="email" id="login-email" class="form-input" placeholder="you@email.com">
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input type="password" class="form-input" value="••••••••••" placeholder="Password">
+        <input type="password" id="login-password" class="form-input" placeholder="Password">
       </div>
       <div class="form-row">
         <label class="form-check"><input type="checkbox" checked> Remember me</label>
         <a class="forgot-link">Forgot password?</a>
       </div>
-      <button class="btn btn-primary" style="width:100%;padding:12px;" onclick="goTo('dashboard')">Sign in</button>
+      <div id="login-error" style="color:#dc2626;font-size:13px;margin-bottom:10px;min-height:18px"></div>
+      <button id="login-btn" class="btn btn-primary" style="width:100%;padding:12px;" onclick="doLogin()">Sign in</button>
       <div class="divider">or continue with</div>
       <button class="btn-google" onclick="goTo('dashboard')">
         <svg class="g-logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
@@ -960,77 +961,123 @@
      PAGE 5 — AI REVIEW
 ================================ -->
 <div id="review" class="page" style="flex-direction:column">
-  <div style="width:100%;max-width:540px;margin:0 auto;padding:32px 20px">
-    <!-- Back button -->
+  <div style="width:100%;max-width:580px;margin:0 auto;padding:32px 20px">
     <button class="btn btn-ghost btn-sm" style="margin-bottom:16px" onclick="goTo('dashboard')">← Back to dashboard</button>
 
     <div class="card review-card animate-in">
       <div class="review-header">
         <div class="review-title">AI CV Review</div>
-        <span class="badge badge-blue">Powered by AI</span>
+        <span class="badge badge-blue">Gemini 2.5 Flash</span>
       </div>
 
-      <!-- Score block -->
-      <div class="review-score-block">
-        <div class="score-circle-wrap">
-          <svg class="score-circle-svg" width="80" height="80" viewBox="0 0 80 80">
-            <circle class="score-circle-bg" cx="40" cy="40" r="34"/>
-            <circle class="score-circle-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="47" id="score-arc"/>
-          </svg>
-          <div class="score-circle-num">78</div>
+      <!-- ── UPLOAD STATE ── -->
+      <div id="review-upload-state">
+        <div class="upload-cv-area" id="review-dropzone"
+          ondragover="event.preventDefault();this.style.borderColor='var(--blue)'"
+          ondragleave="this.style.borderColor=''"
+          ondrop="handleReviewDrop(event)">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.5" style="margin-bottom:12px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-cv-title">Upload your CV for AI analysis</div>
+          <div class="upload-cv-sub" style="margin-bottom:16px">Drag &amp; drop a PDF here, or click to browse</div>
+          <input type="file" id="review-file-input" accept=".pdf" style="display:none" onchange="handleReviewFile(event)">
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('review-file-input').click()">Choose PDF file</button>
         </div>
-        <div>
-          <div class="score-main-num">78 / 100</div>
-          <div class="score-status">Good — room to improve</div>
-          <div class="score-based">Based on content, structure &amp; keywords</div>
+        <div id="review-file-selected" style="display:none;margin:0 24px 16px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:13px;display:none;align-items:center;gap:10px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span id="review-file-name" style="flex:1;font-weight:500"></span>
+          <span id="review-file-size" style="color:var(--text-3)"></span>
         </div>
-      </div>
-
-      <!-- Breakdown -->
-      <div class="breakdown-label">Score Breakdown</div>
-      <div class="breakdown-list">
-        <div class="breakdown-row">
-          <div class="breakdown-name">Content quality</div>
-          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-blue" style="width:82%"></div></div>
-          <div class="breakdown-score score-blue">82</div>
-        </div>
-        <div class="breakdown-row">
-          <div class="breakdown-name">Structure &amp; format</div>
-          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-green" style="width:90%"></div></div>
-          <div class="breakdown-score score-green">90</div>
-        </div>
-        <div class="breakdown-row">
-          <div class="breakdown-name">Keywords</div>
-          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-orange" style="width:65%"></div></div>
-          <div class="breakdown-score score-orange">65</div>
-        </div>
-        <div class="breakdown-row">
-          <div class="breakdown-name">Impact language</div>
-          <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-orange" style="width:70%"></div></div>
-          <div class="breakdown-score score-orange">70</div>
+        <div style="padding:0 24px 20px">
+          <button id="review-analyse-btn" class="btn btn-primary" style="width:100%;display:none" onclick="runAIReview()">Analyse with AI →</button>
         </div>
       </div>
 
-      <!-- Suggestions -->
-      <div class="suggestions-label">Suggestions to Improve</div>
-      <div class="suggestion-list">
-        <div class="suggestion-item"><strong>Add more keywords.</strong> Your CV is missing common industry terms like "CI/CD", "REST API", and "Agile" that recruiters scan for.</div>
-        <div class="suggestion-item"><strong>Quantify your achievements.</strong> Replace "managed a team" with measurable outcomes like "led a team of 4 to deliver the project 2 weeks early".</div>
-        <div class="suggestion-item"><strong>Structure looks great.</strong> Your formatting is clear and easy to scan — keep it consistent across all sections.</div>
+      <!-- ── LOADING STATE ── -->
+      <div id="review-loading-state" style="display:none;padding:48px 24px;text-align:center">
+        <div style="width:48px;height:48px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 20px"></div>
+        <div style="font-weight:600;margin-bottom:6px">Analysing your CV…</div>
+        <div style="font-size:13px;color:var(--text-3)" id="review-loading-msg">Extracting text and sending to Gemini 2.5 Flash</div>
       </div>
 
-      <!-- Upload area -->
-      <div class="upload-cv-area">
-        <div class="upload-cv-title">Review an existing CV</div>
-        <div class="upload-cv-sub">Upload a PDF or Word file to get an AI score</div>
-        <button class="btn btn-primary btn-sm" onclick="showToast('File upload opened')">Upload CV file</button>
+      <!-- ── RESULTS STATE ── -->
+      <div id="review-results-state" style="display:none">
+
+        <!-- Score circle -->
+        <div class="review-score-block">
+          <div class="score-circle-wrap">
+            <svg class="score-circle-svg" width="80" height="80" viewBox="0 0 80 80">
+              <circle class="score-circle-bg" cx="40" cy="40" r="34"/>
+              <circle class="score-circle-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6" id="score-arc"/>
+            </svg>
+            <div class="score-circle-num" id="score-circle-num">0</div>
+          </div>
+          <div>
+            <div class="score-main-num" id="score-overall-num">0 / 100</div>
+            <div class="score-status" id="score-status-text">Analysing…</div>
+            <div class="score-based" id="score-file-meta"></div>
+          </div>
+        </div>
+
+        <!-- Breakdown bars -->
+        <div class="breakdown-label">Score Breakdown</div>
+        <div class="breakdown-list">
+          <div class="breakdown-row">
+            <div class="breakdown-name">Content quality</div>
+            <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-blue" id="bar-content" style="width:0%"></div></div>
+            <div class="breakdown-score score-blue" id="num-content">0</div>
+          </div>
+          <div class="breakdown-row">
+            <div class="breakdown-name">Structure &amp; format</div>
+            <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-green" id="bar-structure" style="width:0%"></div></div>
+            <div class="breakdown-score score-green" id="num-structure">0</div>
+          </div>
+          <div class="breakdown-row">
+            <div class="breakdown-name">ATS compatibility</div>
+            <div class="breakdown-bar-bg"><div class="breakdown-bar-fill bar-orange" id="bar-ats" style="width:0%"></div></div>
+            <div class="breakdown-score score-orange" id="num-ats">0</div>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="breakdown-label">Summary</div>
+        <div style="margin:0 24px 20px;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);font-size:13px;line-height:1.65;color:var(--text-2)" id="review-summary"></div>
+
+        <!-- Suggestions -->
+        <div class="suggestions-label">Suggestions to Improve</div>
+        <div class="suggestion-list" id="review-suggestions"></div>
+
+        <!-- Keywords -->
+        <div class="breakdown-label">Keywords</div>
+        <div style="margin:0 24px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);padding:12px">
+            <div style="font-size:11px;font-weight:600;color:#15803D;margin-bottom:8px">✅ Found</div>
+            <div id="kw-found" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+          </div>
+          <div style="background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);padding:12px">
+            <div style="font-size:11px;font-weight:600;color:#dc2626;margin-bottom:8px">❌ Missing</div>
+            <div id="kw-missing" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+          </div>
+        </div>
+
+        <!-- Section checklist -->
+        <div class="breakdown-label">Section Checklist</div>
+        <div id="review-sections" style="margin:0 24px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+
+        <!-- Actions -->
+        <div class="review-actions">
+          <button class="btn btn-outline btn-sm" onclick="resetReview()">Analyse another</button>
+          <button class="btn btn-primary btn-sm" onclick="goTo('editor')">Fix in editor →</button>
+        </div>
       </div>
 
-      <!-- Actions -->
-      <div class="review-actions">
-        <button class="btn btn-outline btn-sm" onclick="reanalyse()">Re-analyse</button>
-        <button class="btn btn-primary btn-sm" onclick="goTo('editor')">Fix issues in editor</button>
+      <!-- ── ERROR STATE ── -->
+      <div id="review-error-state" style="display:none;padding:32px 24px;text-align:center">
+        <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+        <div style="font-weight:600;margin-bottom:6px">Analysis failed</div>
+        <div style="font-size:13px;color:var(--text-3);margin-bottom:20px" id="review-error-msg"></div>
+        <button class="btn btn-outline btn-sm" onclick="resetReview()">Try again</button>
       </div>
+
     </div>
   </div>
 </div>
@@ -1039,98 +1086,328 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ===== ROUTING =====
-  function goTo(pageId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const target = document.getElementById(pageId);
-    target.classList.add('active');
-    window.scrollTo(0, 0);
+  // ─── CONFIG ────────────────────────────────────────────────────────────────
+  const API_BASE = 'http://localhost:3000'
 
-    // Trigger score arc animation on review page
-    if (pageId === 'review') {
-      setTimeout(() => {
-        const arc = document.getElementById('score-arc');
-        if (arc) {
-          const full = 2 * Math.PI * 34; // 213.6
-          const score = 78;
-          const offset = full - (score / 100) * full;
-          arc.style.strokeDashoffset = offset;
-        }
-      }, 100);
+  // ─── AUTH STATE ────────────────────────────────────────────────────────────
+  let authToken = localStorage.getItem('cvcraft_token') || null
+  let currentUser = JSON.parse(localStorage.getItem('cvcraft_user') || 'null')
+
+  function saveAuth (token, user) {
+    authToken = token
+    currentUser = user
+    localStorage.setItem('cvcraft_token', token)
+    localStorage.setItem('cvcraft_user', JSON.stringify(user))
+    updateUIForUser()
+  }
+
+  function clearAuth () {
+    authToken = null
+    currentUser = null
+    localStorage.removeItem('cvcraft_token')
+    localStorage.removeItem('cvcraft_user')
+    updateUIForUser()
+  }
+
+  function updateUIForUser () {
+    if (currentUser) {
+      const initials = (currentUser.firstName?.[0] || '') + (currentUser.lastName?.[0] || '')
+      document.querySelectorAll('.user-avatar').forEach(el => { el.textContent = initials.toUpperCase() || 'U' })
+      document.querySelectorAll('.user-name').forEach(el => { el.textContent = `${currentUser.firstName} ${currentUser.lastName}` })
+      document.querySelector('.dash-greeting').textContent = `Welcome back, ${currentUser.firstName} 👋`
     }
   }
 
-  // ===== SIDEBAR ACTIVE =====
-  function setActive(el) {
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
+  // ─── ROUTING ────────────────────────────────────────────────────────────────
+  function goTo (pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+    document.getElementById(pageId).classList.add('active')
+    window.scrollTo(0, 0)
+    if (pageId === 'review') resetReview()
   }
 
-  // ===== TEMPLATE SELECTION =====
-  function selectTemplate(el, name) {
-    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    showToast(name + ' selected');
+  // ─── SIDEBAR ────────────────────────────────────────────────────────────────
+  function setActive (el) {
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'))
+    el.classList.add('active')
   }
 
-  // ===== TAB SWITCHING =====
-  function switchTab(btn, tabId) {
-    // Deactivate all tabs
-    btn.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    // Hide all tab panels
-    ['personal-tab','experience-tab','skills-tab','education-tab'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-    const panel = document.getElementById(tabId);
-    if (panel) panel.style.display = 'block';
+  // ─── TEMPLATE SELECTION ─────────────────────────────────────────────────────
+  function selectTemplate (el, name) {
+    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'))
+    el.classList.add('selected')
+    showToast(name + ' selected')
   }
 
-  // ===== LIVE PREVIEW UPDATE =====
-  function updatePreview() {
-    const inputs = document.querySelectorAll('#editor .form-input');
-    // first name + last name
-    const first = inputs[0]?.value || 'Alex';
-    const last = inputs[1]?.value || 'Johnson';
-    const title = inputs[2]?.value || 'Software Engineer';
-    const email = inputs[3]?.value || 'alex@email.com';
-    const nameEl = document.getElementById('preview-name');
-    const titleEl = document.getElementById('preview-title');
-    const emailEl = document.getElementById('preview-email');
-    if (nameEl) nameEl.textContent = `${first} ${last}`;
-    if (titleEl) titleEl.textContent = title;
-    if (emailEl) emailEl.textContent = email;
+  // ─── TAB SWITCHING ──────────────────────────────────────────────────────────
+  function switchTab (btn, tabId) {
+    btn.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+    ;['personal-tab','experience-tab','skills-tab','education-tab'].forEach(id => {
+      const el = document.getElementById(id)
+      if (el) el.style.display = 'none'
+    })
+    const panel = document.getElementById(tabId)
+    if (panel) panel.style.display = 'block'
   }
 
-  // ===== TOAST =====
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  // ─── LIVE PREVIEW ───────────────────────────────────────────────────────────
+  function updatePreview () {
+    const inputs = document.querySelectorAll('#editor .form-input')
+    const first = inputs[0]?.value || 'Alex'
+    const last  = inputs[1]?.value || 'Johnson'
+    const title = inputs[2]?.value || 'Software Engineer'
+    const email = inputs[3]?.value || 'alex@email.com'
+    const nameEl  = document.getElementById('preview-name')
+    const titleEl = document.getElementById('preview-title')
+    const emailEl = document.getElementById('preview-email')
+    if (nameEl)  nameEl.textContent  = `${first} ${last}`
+    if (titleEl) titleEl.textContent = title
+    if (emailEl) emailEl.textContent = email
   }
 
-  // ===== RE-ANALYSE =====
-  function reanalyse() {
-    const arc = document.getElementById('score-arc');
-    if (arc) {
-      arc.style.strokeDashoffset = 213.6; // reset
-      setTimeout(() => {
-        const full = 213.6;
-        const score = 78;
-        arc.style.strokeDashoffset = full - (score / 100) * full;
-      }, 80);
+  // ─── TOAST ──────────────────────────────────────────────────────────────────
+  function showToast (msg) {
+    const t = document.getElementById('toast')
+    t.textContent = msg
+    t.classList.add('show')
+    clearTimeout(window._toastTimer)
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2400)
+  }
+
+  // ─── LOGIN ──────────────────────────────────────────────────────────────────
+  async function doLogin () {
+    const email    = document.getElementById('login-email')?.value?.trim()
+    const password = document.getElementById('login-password')?.value
+    const btn      = document.getElementById('login-btn')
+    const errEl    = document.getElementById('login-error')
+
+    if (!email || !password) {
+      if (errEl) errEl.textContent = 'Please enter email and password.'
+      return
     }
-    showToast('Re-analysing your CV...');
+
+    btn.disabled = true
+    btn.textContent = 'Signing in…'
+    if (errEl) errEl.textContent = ''
+
+    try {
+      const res  = await fetch(`${API_BASE}/UserLogin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (errEl) errEl.textContent = data.message || 'Login failed.'
+        return
+      }
+
+      saveAuth(data.token, data.data)
+      showToast(`Welcome back, ${data.data.firstName}!`)
+      goTo('dashboard')
+    } catch (err) {
+      if (errEl) errEl.textContent = 'Could not reach server. Is the backend running?'
+    } finally {
+      btn.disabled = false
+      btn.textContent = 'Sign in'
+    }
   }
 
-  // Init: trigger score arc on first load if on review page
+  // ─── LOGOUT ─────────────────────────────────────────────────────────────────
+  async function doLogout () {
+    if (!authToken) { clearAuth(); goTo('landing'); return }
+    try {
+      await fetch(`${API_BASE}/UserLogout`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${authToken}` }
+      })
+    } catch (_) {}
+    clearAuth()
+    showToast('Logged out successfully')
+    goTo('landing')
+  }
+
+  // ─── AI REVIEW ──────────────────────────────────────────────────────────────
+  let reviewFile = null
+
+  function showReviewState (state) {
+    ;['upload','loading','results','error'].forEach(s => {
+      const el = document.getElementById(`review-${s}-state`)
+      if (el) el.style.display = s === state ? 'block' : 'none'
+    })
+  }
+
+  function resetReview () {
+    reviewFile = null
+    const inp = document.getElementById('review-file-input')
+    if (inp) inp.value = ''
+    const sel = document.getElementById('review-file-selected')
+    if (sel) sel.style.display = 'none'
+    const btn = document.getElementById('review-analyse-btn')
+    if (btn) btn.style.display = 'none'
+    showReviewState('upload')
+  }
+
+  function handleReviewFile (e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    reviewFile = file
+    const sel  = document.getElementById('review-file-selected')
+    sel.style.display = 'flex'
+    document.getElementById('review-file-name').textContent = file.name
+    document.getElementById('review-file-size').textContent = `${(file.size / 1024).toFixed(0)} KB`
+    const btn = document.getElementById('review-analyse-btn')
+    if (btn) btn.style.display = 'block'
+  }
+
+  function handleReviewDrop (e) {
+    e.preventDefault()
+    document.getElementById('review-dropzone').style.borderColor = ''
+    const file = e.dataTransfer.files?.[0]
+    if (!file) return
+    if (file.type !== 'application/pdf') { showToast('Only PDF files are accepted'); return }
+    handleReviewFile({ target: { files: [file] } })
+  }
+
+  async function runAIReview () {
+    if (!reviewFile) return
+
+    showReviewState('loading')
+
+    const msgs = [
+      'Extracting text from your PDF…',
+      'Sending to Gemini 2.5 Flash…',
+      'Scoring content, structure and ATS…',
+      'Generating suggestions…'
+    ]
+    let mi = 0
+    const msgEl = document.getElementById('review-loading-msg')
+    const msgTimer = setInterval(() => {
+      if (msgEl && mi < msgs.length - 1) { mi++; msgEl.textContent = msgs[mi] }
+    }, 3500)
+
+    try {
+      const formData = new FormData()
+      formData.append('resume', reviewFile)
+
+      const res  = await fetch(`${API_BASE}/ai/feedback`, {
+        method: 'POST',
+        body: formData
+      })
+      const data = await res.json()
+      clearInterval(msgTimer)
+
+      if (!res.ok) {
+        document.getElementById('review-error-msg').textContent = data.message || 'Analysis failed.'
+        showReviewState('error')
+        return
+      }
+
+      renderReviewResults(data)
+    } catch (err) {
+      clearInterval(msgTimer)
+      document.getElementById('review-error-msg').textContent =
+        'Could not reach server. Make sure the backend is running on port 3000.'
+      showReviewState('error')
+    }
+  }
+
+  function scoreStatusText (n) {
+    if (n >= 80) return 'Excellent — great CV!'
+    if (n >= 65) return 'Good — room to improve'
+    if (n >= 50) return 'Fair — needs some work'
+    return 'Needs significant improvement'
+  }
+
+  function priorityColor (p) {
+    return p === 'High' ? '#dc2626' : p === 'Medium' ? '#d97706' : '#16a34a'
+  }
+
+  function renderReviewResults (data) {
+    const fb = data.feedback
+    const sc = fb.scores
+
+    // Score circle
+    const full   = 213.6
+    const offset = full - (sc.overall / 100) * full
+    setTimeout(() => {
+      const arc = document.getElementById('score-arc')
+      if (arc) arc.style.strokeDashoffset = offset
+    }, 100)
+    document.getElementById('score-circle-num').textContent  = sc.overall
+    document.getElementById('score-overall-num').textContent = `${sc.overall} / 100`
+    document.getElementById('score-status-text').textContent = scoreStatusText(sc.overall)
+    document.getElementById('score-file-meta').textContent   =
+      `${data.meta.filename} · ${data.meta.pages} page(s) · ${data.meta.wordCount} words`
+
+    // Breakdown bars
+    ;[['content', sc.content], ['structure', sc.structure], ['ats', sc.ats]].forEach(([key, val]) => {
+      const bar = document.getElementById(`bar-${key}`)
+      const num = document.getElementById(`num-${key}`)
+      if (bar) setTimeout(() => { bar.style.width = `${val}%` }, 150)
+      if (num) num.textContent = val
+    })
+
+    // Summary
+    document.getElementById('review-summary').textContent = fb.summary || ''
+
+    // Suggestions
+    const sugEl = document.getElementById('review-suggestions')
+    sugEl.innerHTML = (fb.suggestions || []).map(s => `
+      <div class="suggestion-item">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;padding:2px 8px;border-radius:4px;background:var(--bg);border:1px solid var(--border);color:var(--text-2)">${s.category}</span>
+          <span style="font-size:11px;font-weight:600;color:${priorityColor(s.priority)}">${s.priority}</span>
+        </div>
+        <div style="font-weight:600;margin-bottom:3px;font-size:13px">${s.suggestion}</div>
+        <div style="font-size:12px;color:var(--text-3);font-style:italic">${s.impact}</div>
+      </div>`).join('')
+
+    // Keywords
+    const kf = document.getElementById('kw-found')
+    const km = document.getElementById('kw-missing')
+    kf.innerHTML = (fb.keywords?.found || []).map(k =>
+      `<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:#DCFCE7;color:#15803D">${k}</span>`).join('')
+    km.innerHTML = (fb.keywords?.missing || []).map(k =>
+      `<span style="font-size:11px;padding:2px 8px;border-radius:20px;background:#FEE2E2;color:#991B1B">${k}</span>`).join('')
+
+    // Section checklist
+    const sa = fb.sectionAnalysis || {}
+    const sections = [
+      ['hasContactInfo','Contact Info'], ['hasSummary','Summary'], ['hasExperience','Experience'],
+      ['hasEducation','Education'], ['hasSkills','Skills'], ['hasAchievements','Achievements']
+    ]
+    document.getElementById('review-sections').innerHTML = sections.map(([key, label]) => {
+      const ok = sa[key]
+      return `<div style="display:flex;align-items:center;gap:6px;font-size:13px">
+        <span>${ok ? '✅' : '❌'}</span>
+        <span style="color:${ok ? '#16a34a' : '#dc2626'}">${label}</span>
+      </div>`
+    }).join('')
+
+    showReviewState('results')
+    showToast('Analysis complete!')
+  }
+
+  // ─── SPIN ANIMATION ─────────────────────────────────────────────────────────
+  const spinStyle = document.createElement('style')
+  spinStyle.textContent = '@keyframes spin { to { transform: rotate(360deg); } }'
+  document.head.appendChild(spinStyle)
+
+  // ─── INIT ───────────────────────────────────────────────────────────────────
   window.addEventListener('load', () => {
-    const arc = document.getElementById('score-arc');
-    if (arc) arc.style.strokeDashoffset = 213.6;
-  });
+    updateUIForUser()
+    // Wire logout to Settings sidebar item
+    document.querySelectorAll('.sidebar-item').forEach(item => {
+      if (item.textContent.trim() === 'Settings') {
+        item.addEventListener('click', () => {
+          if (confirm('Log out?')) doLogout()
+        })
+      }
+    })
+  })
 </script>
 </body>
 </html>

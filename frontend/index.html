@@ -573,13 +573,13 @@
       </div>
       <div class="login-quote">
         "Got the interview within a week of using CVCraft. The AI suggestions made a huge difference."
-        <div class="login-quote-author">— Sarah K., Graduate Student</div>
+        <div class="login-quote-author">— Group 11., Graduate Students</div>
       </div>
     </div>
 
     <div class="login-right">
       <h2 class="login-title">Welcome back</h2>
-      <p class="login-new">New here? <a onclick="goTo('dashboard')">Create a free account</a></p>
+      <p class="login-new">New here? <a onclick="goTo('register')">Create a free account</a></p>
 
       <div class="form-group">
         <label class="form-label">Email address</label>
@@ -600,7 +600,54 @@
         <svg class="g-logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         Sign in with Google
       </button>
-      <div class="signup-link">Don't have an account? <a onclick="goTo('dashboard')">Sign up free</a></div>
+      <div class="signup-link">Don't have an account? <a onclick="goTo('register')">Sign up free</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================
+     PAGE 2b — REGISTER
+================================ -->
+<div id="register" class="page">
+  <div class="login-box animate-in">
+    <div class="login-left">
+      <div class="login-logo"><div class="login-logo-dot"></div> CVCraft AI</div>
+      <div>
+        <h1 class="login-headline">Build your career story</h1>
+        <p class="login-sub">Create your free account and start building a professional CV in minutes with AI-powered tools.</p>
+        <ul class="login-features">
+          <li><div class="lf-dot"></div> 12+ professional templates</li>
+          <li><div class="lf-dot"></div> AI-powered review &amp; score</li>
+          <li><div class="lf-dot"></div> Download as PDF instantly</li>
+          <li><div class="lf-dot"></div> Edit anytime, save your progress</li>
+        </ul>
+      </div>
+    </div>
+    <div class="login-right">
+      <h2 class="login-title">Create your account</h2>
+      <p class="login-new">Already have one? <a onclick="goTo('login')">Sign in</a></p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group">
+          <label class="form-label">First name</label>
+          <input type="text" id="reg-firstname" class="form-input" placeholder="Alex">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last name</label>
+          <input type="text" id="reg-lastname" class="form-input" placeholder="Johnson">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="reg-email" class="form-input" placeholder="you@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="reg-password" class="form-input" placeholder="Min. 8 characters">
+      </div>
+      <div id="reg-error" style="color:#dc2626;font-size:13px;margin-bottom:10px;min-height:18px"></div>
+      <div id="reg-success" style="color:#16a34a;font-size:13px;margin-bottom:10px;min-height:18px"></div>
+      <button id="reg-btn" class="btn btn-primary" style="width:100%;padding:12px;" onclick="doRegister()">Create account</button>
+      <div class="signup-link" style="margin-top:16px">Already have an account? <a onclick="goTo('login')">Sign in</a></div>
     </div>
   </div>
 </div>
@@ -635,9 +682,9 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         Settings
       </div>
-      <div class="sidebar-item" onclick="setActive(this)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Help
+      <div class="sidebar-item" onclick="doLogout()" style="color:#dc2626">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log out
       </div>
     </nav>
     <div class="sidebar-user">
@@ -1175,6 +1222,69 @@
     window._toastTimer = setTimeout(() => t.classList.remove('show'), 2400)
   }
 
+  // ─── REGISTER ───────────────────────────────────────────────────────────────
+  async function doRegister () {
+    const firstName = document.getElementById('reg-firstname')?.value?.trim()
+    const lastName  = document.getElementById('reg-lastname')?.value?.trim()
+    const email     = document.getElementById('reg-email')?.value?.trim()
+    const password  = document.getElementById('reg-password')?.value
+    const btn       = document.getElementById('reg-btn')
+    const errEl     = document.getElementById('reg-error')
+    const sucEl     = document.getElementById('reg-success')
+
+    if (!firstName || !lastName || !email || !password) {
+      if (errEl) errEl.textContent = 'Please fill in all fields.'
+      return
+    }
+    if (password.length < 8) {
+      if (errEl) errEl.textContent = 'Password must be at least 8 characters.'
+      return
+    }
+
+    btn.disabled = true
+    btn.textContent = 'Creating account…'
+    if (errEl) errEl.textContent = ''
+    if (sucEl) sucEl.textContent = ''
+
+    try {
+      const res  = await fetch(`${API_BASE}/UserRegister`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, email, password })
+      })
+      const data = await res.json()
+
+      if (!res.ok) {
+        if (errEl) errEl.textContent = data.message || 'Registration failed.'
+        return
+      }
+
+      if (sucEl) sucEl.textContent = 'Account created! Signing you in…'
+
+      // Auto-login after register
+      const loginRes  = await fetch(`${API_BASE}/UserLogin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      const loginData = await loginRes.json()
+
+      if (loginRes.ok) {
+        saveAuth(loginData.token, loginData.data)
+        showToast(`Welcome, ${loginData.data.firstName}!`)
+        goTo('dashboard')
+      } else {
+        if (sucEl) sucEl.textContent = 'Account created! Please sign in.'
+        setTimeout(() => goTo('login'), 1500)
+      }
+    } catch (err) {
+      if (errEl) errEl.textContent = 'Could not reach server. Is the backend running?'
+    } finally {
+      btn.disabled = false
+      btn.textContent = 'Create account'
+    }
+  }
+
   // ─── LOGIN ──────────────────────────────────────────────────────────────────
   async function doLogin () {
     const email    = document.getElementById('login-email')?.value?.trim()
@@ -1399,14 +1509,6 @@
   // ─── INIT ───────────────────────────────────────────────────────────────────
   window.addEventListener('load', () => {
     updateUIForUser()
-    // Wire logout to Settings sidebar item
-    document.querySelectorAll('.sidebar-item').forEach(item => {
-      if (item.textContent.trim() === 'Settings') {
-        item.addEventListener('click', () => {
-          if (confirm('Log out?')) doLogout()
-        })
-      }
-    })
   })
 </script>
 </body>

@@ -297,6 +297,33 @@ The AI Review page (Page 5) allows users to:
 
 ---
 
+
+
+## 🖥️ Screenshots
+
+ss2
+![alt text](ss4.png)
+### Login Page
+![alt text](ss5.png)
+### User Register
+- a
+![alt text](ss6.png)
+- b
+![alt text](ss7.png)
+
+### Dashboard
+![alt text](ss8.png)
+### AI feedback
+- a
+![alt text](ss9.png)
+- b
+![alt text](ss10.png)
+- c 
+![alt text](ss11.png)
+- d
+![alt text](ss12.png)
+---
+
 ## Links
 
 - GitHub: [github.com/Vipul706/SIT725_CV_Builder](https://github.com/Vipul706/SIT725_CV_Builder)
